@@ -11,5 +11,3 @@ public class PersonalProjectApplication {
     }
 
 }
-
-// initial commit for dev branch

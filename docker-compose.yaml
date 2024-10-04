@@ -1,0 +1,48 @@
+name: personal_project
+
+services:
+
+  pgdb:
+    image: postgres:latest
+    container_name: pgdb_container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: personal_project
+      PGDATA: /data/postgres/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdb:/data/postgres
+    restart: always  #unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      retries: 5
+    networks:
+      - dev
+
+  app:
+    container_name: personal_project
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://pgdb:5432/personal_project
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: personal_project
+    ports:
+      - "8081:8080"
+    depends_on:
+      pgdb:
+        condition: service_healthy
+    networks:
+      - dev
+
+volumes:
+  pgdb: {}
+  logs:
+    driver: local
+
+networks:
+  dev:
+    name: dev
