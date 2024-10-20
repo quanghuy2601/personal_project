@@ -22,6 +22,18 @@ services:
     networks:
       - dev
 
+  redis:
+    image: redis:alpine
+    container_name: redis
+    hostname: localhost
+    ports:
+      - "6379:6379"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_DISABLE_COMMAND=FLUSHDB:FLUSHALL
+    networks:
+      - dev
+
   app:
     container_name: personal_project
     environment:
